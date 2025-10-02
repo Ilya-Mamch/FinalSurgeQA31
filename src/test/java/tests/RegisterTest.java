@@ -1,87 +1,55 @@
 package tests;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import pages.RegisterPage;
+import utils.Retry;
 
-public class RegisterTest  extends BaseTest{
+public class RegisterTest extends BaseTest {
 
-    @Test
+    @Test(description = "Registration: positive case with valid data", retryAnalyzer = Retry.class)
     public void checkPositiveRegistration() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "ilamamcik35@gmail.com",
-                "TestQAIlya31", "TestQAIlya31");
+        registerPage.openPage()
+                .register("Ilya", "Test", user, password, password)
+                .pageIsOpened();
     }
 
-    @Test
-    public void checkRegistrationWithEmptyField() {
-        registerPage.openPage();
-        registerPage.register("", "", "",
-                "", "");
-        registerPage.errorMessage("This field is required.");
+    @DataProvider(name = "registrationNegativeData")
+    public Object[][] registrationNegativeData() {
+        return new Object[][]{
+                // name, lastName, email, password, retypePassword, expectedError, expectedInvalid
+                {"", "", "", "", "", "This field is required.", null},
+                {"", "Test", user, "123456QA", "123456QA", "This field is required.", null},
+                {"Ilya", "", user, "123456QA", "123456QA", "This field is required.", null},
+                {"Ilya", "Test", "", "123456QA", "123456QA", "This field is required.", null},
+                {"Ilya", "Test", user, "", "123456QA", "This field is required.", null},
+                {"Ilya", "Test", user, "123456QA", "", "This field is required.", null},
+                {"Ilya", "Test", "test", "123456QA", "123456QA", "Please enter a valid email address.", null},
+                {"Ilya", "Test", user, "123456QA", "123456QA", null,
+                        " *Please enter a Password value with at least one number, lower-case letter, and upper-case " +
+                                "letter between 7 and 15 characters in length."},
+                {"Ilya", "Test", user, password, "132412", null,
+                        " The passwords you entered did not match."}
+        };
     }
 
-    @Test
-    public void checkRegistrationWithEmptyFirstName() {
-        registerPage.openPage();
-        registerPage.register("", "Test", "ilamamcik35@gmail.com",
-                "123456QA", "123456QA");
-        registerPage.errorMessage("This field is required.");
-    }
+    @Test(dataProvider = "registrationNegativeData",
+            description = "Registration: negative cases with missing, invalid or mismatched data",
+            retryAnalyzer = Retry.class)
+    public void checkNegativeRegistration(String firstName,
+                                          String lastName,
+                                          String email,
+                                          String password,
+                                          String retypePassword,
+                                          String expectedError,
+                                          String expectedInvalid) {
+        registerPage.openPage()
+                .register(firstName, lastName, email, password, retypePassword);
 
-    @Test
-    public void checkRegistrationWithEmptyLastName() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "", "ilamamcik35@gmail.com",
-                "123456QA", "123456QA");
-        registerPage.errorMessage("This field is required.");
-    }
-
-    @Test
-    public void checkRegistrationWithEmptyEmail() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "",
-                "123456QA", "123456QA");
-        registerPage.errorMessage("This field is required.");
-    }
-
-    @Test
-    public void checkRegistrationWithEmptyPassword() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "ilamamcik35@gmail.com",
-                "", "123456QA");
-        registerPage.errorMessage("This field is required.");
-    }
-
-    @Test
-    public void checkRegistrationWithEmptyRetypePassword() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "ilamamcik35@gmail.com",
-                "123456QA", "");
-        registerPage.errorMessage("This field is required.");
-    }
-
-    @Test
-    public void checkRegistrationWithInvalidEmail() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "ilamamcik35gmail.com",
-                "123456QA", "123456QA");
-        registerPage.errorMessage("Please enter a valid email address.");
-    }
-
-    @Test
-    public void checkRegistrationWithInvalidPassword() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "ilamamcik@35gmail.com",
-                "123456QA", "123456QA");
-        registerPage.invalidMessage(" *Please enter a Password value with at least one number, lower-case letter," +
-                " and upper-case letter between 7 and 15 characters in length.");
-    }
-
-    @Test
-    public void checkRegistrationWithInvalidRetypePassword() {
-        registerPage.openPage();
-        registerPage.register("Ilya", "Test", "ilamamcik@35gmail.com",
-                "TestQAIlya31", "TestQAIlya312");
-        registerPage.invalidMessage(" The passwords you entered did not match.");
+        if (expectedError != null) {
+            registerPage.checkErrorMessage(expectedError);
+        }
+        if (expectedInvalid != null) {
+            registerPage.checkInvalidMessage(expectedInvalid);
+        }
     }
 }
