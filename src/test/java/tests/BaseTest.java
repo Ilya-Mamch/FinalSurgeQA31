@@ -29,9 +29,9 @@ public class BaseTest {
     public void setUP(@Optional("chrome") String browser) {
         Configuration.browser = browser;
         Configuration.baseUrl = "https://log.finalsurge.com";
-        Configuration.timeout = 10000;
+        Configuration.timeout = 5000;
         Configuration.clickViaJs = true;
-        Configuration.headless = Boolean.parseBoolean(System.getProperty("headless", "true"));
+        Configuration.headless = false;
 
         if ("chrome".equalsIgnoreCase(browser)) {
             ChromeOptions options = new ChromeOptions();

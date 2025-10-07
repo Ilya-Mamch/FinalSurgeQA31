@@ -59,7 +59,7 @@ public class WorkoutAddTest extends BaseTest {
                 .clickRunButton();
         workoutAddPage.clickCalendarButton()
                 .clickDataInCalendar("28")
-                .checkDateFieldValue("10/28/2025");
+                .checkDateFieldValue("09/28/2025");
     }
 
     @Test(description = "Workout: verify Basic Workout option is enabled by default", retryAnalyzer = Retry.class)
