@@ -35,12 +35,21 @@ public class BaseTest {
 
         if ("chrome".equalsIgnoreCase(browser)) {
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--start-maximized");
+            if (Configuration.headless) {
+                options.addArguments("--headless=new");
+            }
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--window-size=1920,1080");
             Configuration.browserCapabilities = options;
         } else if ("firefox".equalsIgnoreCase(browser)) {
             FirefoxOptions options = new FirefoxOptions();
             options.addArguments("--width=1920");
             options.addArguments("--height=1080");
+            if (Configuration.headless) {
+                options.addArguments("--headless");
+            }
             Configuration.browserCapabilities = options;
         }
 
