@@ -2,10 +2,9 @@ package tests;
 
 import com.codeborne.selenide.Configuration;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.*;
 import pages.*;
 import utils.AllureUtils;
 import utils.PropertyReader;
@@ -26,15 +25,24 @@ public class BaseTest {
     String password = System.getProperty("password", PropertyReader.getProperty("password"));
 
     @BeforeMethod
-    public void setUP() {
-        Configuration.browser = "chrome";
+    @Parameters({"browser"})
+    public void setUP(@Optional("chrome") String browser) {
+        Configuration.browser = browser;
         Configuration.baseUrl = "https://log.finalsurge.com";
         Configuration.timeout = 5000;
-        Configuration.clickViaJs = true; // все клики JS
-        Configuration.headless = false; // запуск браузера без графического интерфейса
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
-        Configuration.browserCapabilities = options;
+        Configuration.clickViaJs = true;
+        Configuration.headless = false;
+
+        if ("chrome".equalsIgnoreCase(browser)) {
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--start-maximized");
+            Configuration.browserCapabilities = options;
+        } else if ("firefox".equalsIgnoreCase(browser)) {
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--width=1920");
+            options.addArguments("--height=1080");
+            Configuration.browserCapabilities = options;
+        }
 
         loginPage = new LoginPage();
         registerPage = new RegisterPage();
@@ -45,7 +53,7 @@ public class BaseTest {
     }
 
     @AfterMethod
-    public void tearDawn(ITestResult result) {
+    public void tearDown(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE) {
             AllureUtils.takeScreenshot();
         }
