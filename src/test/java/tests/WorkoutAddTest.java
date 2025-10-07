@@ -8,7 +8,7 @@ import utils.Retry;
 public class WorkoutAddTest extends BaseTest {
 
     Workout workoutPositive = Workout.builder()
-            .date("9/27/2025")
+            .date("10/27/2025")
             .workoutName("Test")
             .description("Test number one")
             .distance("20")
@@ -16,7 +16,7 @@ public class WorkoutAddTest extends BaseTest {
             .build();
 
     Workout workoutWithOnlyDate = Workout.builder()
-            .date("9/27/2025")
+            .date("10/27/2025")
             .build();
 
     @Test(description = "Workout: positive case with all fields filled", retryAnalyzer = Retry.class)
@@ -59,7 +59,7 @@ public class WorkoutAddTest extends BaseTest {
                 .clickRunButton();
         workoutAddPage.clickCalendarButton()
                 .clickDataInCalendar("28")
-                .checkDateFieldValue("9/28/2025");
+                .checkDateFieldValue("10/28/2025");
     }
 
     @Test(description = "Workout: verify Basic Workout option is enabled by default", retryAnalyzer = Retry.class)
