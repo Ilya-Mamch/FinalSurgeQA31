@@ -29,7 +29,7 @@ public class BaseTest {
     public void setUP(@Optional("chrome") String browser) {
         Configuration.browser = browser;
         Configuration.baseUrl = "https://log.finalsurge.com";
-        Configuration.timeout = 5000;
+        Configuration.timeout = 10000;
         Configuration.clickViaJs = true;
         Configuration.headless = Boolean.parseBoolean(System.getProperty("headless", "true"));
 
