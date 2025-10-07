@@ -31,7 +31,7 @@ public class BaseTest {
         Configuration.baseUrl = "https://log.finalsurge.com";
         Configuration.timeout = 5000;
         Configuration.clickViaJs = true;
-        Configuration.headless = false;
+        Configuration.headless = Boolean.parseBoolean(System.getProperty("headless", "true"));
 
         if ("chrome".equalsIgnoreCase(browser)) {
             ChromeOptions options = new ChromeOptions();
