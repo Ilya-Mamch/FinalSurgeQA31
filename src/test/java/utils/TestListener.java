@@ -7,7 +7,6 @@ import org.testng.ITestResult;
 
 import java.util.concurrent.TimeUnit;
 
-
 @Log4j2
 public class TestListener implements ITestListener {
 
@@ -18,37 +17,42 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
-        log.info("======================================== FINISHED TEST {} Duration: {} ========================================%n", iTestResult.getName(),
-                getExecutionTime(iTestResult));
+        log.info("======================================== FINISHED TEST {} Duration: {} ========================================%n",
+                iTestResult.getName(), getExecutionTime(iTestResult));
     }
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
-        log.warn("======================================== FAILED TEST {} Duration: {} ========================================%n", iTestResult.getName(),
-                getExecutionTime(iTestResult));
+        log.warn("======================================== FAILED TEST {} Duration: {} ========================================%n",
+                iTestResult.getName(), getExecutionTime(iTestResult));
+        try {
+            AllureUtils.takeScreenshot();
+        } catch (Exception e) {
+            log.error("Не удалось сделать скриншот для теста {}", iTestResult.getName(), e);
+        }
     }
 
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
-        log.info("======================================== SKIPPING TEST {}} ========================================%n", iTestResult.getName());
+        log.info("======================================== SKIPPING TEST {} ========================================%n", iTestResult.getName());
     }
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
-
     }
 
     @Override
     public void onStart(ITestContext iTestContext) {
-
     }
 
     @Override
     public void onFinish(ITestContext iTestContext) {
-
     }
 
     private long getExecutionTime(ITestResult iTestResult) {
-        return TimeUnit.MILLISECONDS.toSeconds(iTestResult.getEndMillis() - iTestResult.getStartMillis());
+        return TimeUnit.MILLISECONDS.toSeconds(
+                iTestResult.getEndMillis() - iTestResult.getStartMillis()
+        );
     }
 }
+
